@@ -12,7 +12,7 @@
     <header>
         <img src="images/icone_header.png" alt="logo" class="icone1"/>
         <div class="composant1">
-            <input type="text" placeholder="Search"/>
+            <!-- <input type="text" placeholder="Search"/> -->
             <select id="switch_lang" name="Langue">
                 <option value="fr">French</option>
                 <option value="en">English</option>
@@ -36,7 +36,7 @@
         </ul>
         <a href="contact.html"><button>Contact Us</button></a>
     </nav>
-    <!-- hero_section -->
+<!-- hero_section -->
     <section class="about_banner">
         <img src="images/missions.png" class="image1">
         <div class="txt_about">
@@ -45,12 +45,45 @@
         </div>  
         <button>Explore More</button>      
     </section>
-
-
-    <section class="mission" id="mission_sec">
-            <h1>All Space Missions</h1>
-            <div class="container_mission" id="container_mission">  
-            </div>
+<!-- barre de intro, search & filter -->
+<section class="intro_barre">
+    <h1>All Space Missions</h1>
+    <div class="barre_mission">
+        <input type="text" placeholder="Search" />
+        <div class="filtre">
+            <select id="agency" name="Agency">
+                <option value="all_agency">All Agency</option>
+                <option value="agence_1">NASA</option>
+                <option value="agence_2">ESA</option>
+                <option value="agence_3">CSA</option>
+            </select>
+        </div>
+        <div class="filtre">
+            <select id="type_mission" name="type_mission">
+                <option value="type">Type of mission</option>
+                <option value="agence_1">NASA</option>
+                <option value="agence_2">ESA</option>
+                <option value="agence_3">CSA</option>
+            </select>
+        </div>
+        <div class="filtre">
+            <select id="year" name="Year">
+                <option value="Year">Year</option>
+                <option value="agence_1">2022</option>
+                <option value="agence_2">2021</option>
+                <option value="agence_3">2018</option>
+                <option value="agence_3">2011</option>
+                <option value="agence_3">2004</option>
+                <option value="agence_3">1977</option>
+                <option value="agence_3">1969</option>
+            </select>
+        </div>
+    </div>
+</section>
+<!-- cards missions -->
+<section class="mission" id="mission_sec">
+    <!-- <div class="container_mission" id="container_mission">  
+            </div> -->
     </section>
     
 
