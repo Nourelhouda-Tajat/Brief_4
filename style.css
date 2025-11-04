@@ -727,6 +727,10 @@ ul li{
   font-variation-settings: 'FILL' 0;
   transition: color 0.2s;
 }
+.favorite-icon:hover{
+    color: rgb(31, 95, 144);
+
+}
 
 .favorite-icon.active {
   color: gold;
@@ -802,6 +806,19 @@ ul li{
 .btn_submit:hover {
     background-color: #45a049;
 }
+.edit-icon:hover{
+    color: rgb(31, 95, 144);
+}
+.edit-icon{
+    cursor: pointer;
+}
+.delete-icon:hover{
+    color: rgb(31, 95, 144);
+}
+.delete-icon{
+    cursor: pointer;
+}
+
 /* contact */
 .contact_user{
     margin: 5% 10%; 
