@@ -253,8 +253,32 @@ function saveMission(event) {
 
 // ====== FONCTION SUPPRESSION (À COMPLÉTER PLUS TARD) ======
 function deleteMission(missionId) {
-  alert("Fonction de suppression pour la mission ID: " + missionId);
-  // On verra ça plus tard !
+   const mission = allMissions.find((m) => m.id == missionId);
+
+   if (!mission) {
+     alert("❌ Mission non trouvée !");
+     return;
+   }
+
+   // 2. Demander confirmation avec le nom de la mission
+   const confirmation = confirm(
+     `⚠️ Êtes-vous sûr de vouloir supprimer la mission "${mission.name}" ?\n\nCette action est irréversible.`
+   );
+
+   // 3. Si l'utilisateur clique sur "Annuler", on arrête
+   if (!confirmation) {
+     return;
+   }
+
+   // 4. Supprimer la mission du tableau
+   const missionIndex = allMissions.findIndex((m) => m.id == missionId);
+   allMissions.splice(missionIndex, 1);
+
+   // 5. Rafraîchir l'affichage
+   displayMissions(allMissions);
+
+   // 6. Message de confirmation
+   alert("✅ Mission supprimée avec succès !");
 }
 
 // ====== ÉCOUTER LES ÉVÉNEMENTS DU MODAL ======
