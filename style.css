@@ -684,13 +684,25 @@ ul li{
     color: #C0C0C0;
     height: 50px;
     width: 1200px;
+    gap: 5%;
     align-self: center;
     border-radius: 20px;
     display: flex;
     flex-wrap: wrap;
     padding-top: 15px;
 }
+.filtre {
+    height: fit-content;
 
+    transition: transform 1s ease-out;
+    
+    }
+    
+    .filtre:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 2px #ffffffaa;
+    
+    }
 .barre_mission input {
     background-image: url(images/icone_search.png);
     background-repeat: no-repeat;
@@ -704,7 +716,10 @@ ul li{
     padding-left: 10px;
     padding-right: 100px;
     color: white;
-    box-shadow: 1px 2px 3px #ffffffaa;
+}
+
+.barre_mission input:hover {
+    box-shadow: 1px 2px #ffffffaa;
 }
 .favorite-icon {
   cursor: pointer;
@@ -719,6 +734,74 @@ ul li{
 }
 
 
+/*mission  Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal_content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+/*mission  Formulaire */
+#form_add_mission label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+#form_add_mission input,
+#form_add_mission textarea,
+#form_add_mission select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.btn_submit {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.btn_submit:hover {
+    background-color: #45a049;
+}
 /* contact */
 .contact_user{
     margin: 5% 10%; 
@@ -881,5 +964,6 @@ footer input{
     padding: 8px;
     width: 220px;
 }
+
 
 

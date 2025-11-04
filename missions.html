@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Odyssey --Missions</title>
     <link rel="stylesheet" href="style.css"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <body>
     <header>
@@ -78,6 +78,7 @@
                 <option value="agence_3">1969</option>
             </select>
         </div>
+        <button class="btn_add filtre" id="btn_add_mission">+ Add Mission</button>
     </div>
 </section>
 <!-- cards missions -->
@@ -85,7 +86,37 @@
     <!-- <div class="container_mission" id="container_mission">  
             </div> -->
     </section>
+    <section id="modal_add" class="modal">
+        <div class="modal_content">
+            <span class="close">&times;</span>
+            <h2>Add New Mission</h2>
+            <form id="form_add_mission">
+                <label>Mission Name:</label>
+                <input type="text" id="mission_name" required />
     
+                <label>Agency:</label>
+                <input type="text" id="mission_agency" placeholder="Ex: NASA" required />
+                
+                <label>Type:</label>
+                <select id="mission_type" required>
+                    <option value="">Select type</option>
+                    <option value="Observatory">Observatory</option>
+                    <option value="Rover">Rover</option>
+                    <option value="Lander">Lander</option>
+                    <option value="Orbiter">Orbiter</option>
+                </select>
+                
+                <label>Launch Date:</label>
+                <input type="text" id="mission_date" placeholder="Ex: December 25, 2021" required />
+                
+                <label>Objective:</label>
+                <textarea id="mission_objective" rows="4" required></textarea>
+                <label>Image URL:</label>
+                <input type="text" id="mission_image" placeholder="Ex: images/mission.jpg" required />
+                <button type="submit" class="btn_submit">Add Mission</button>
+                </form>
+                </div>
+                </section>
 
     <footer>
             <div class="box2">
@@ -133,6 +164,6 @@
                 </div>
             </div>
     </footer>
-    <script src="script.js"></script>
+    <script src="sript_test.js"></script>
 </body>
 </html>
