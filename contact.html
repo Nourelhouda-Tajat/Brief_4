@@ -53,29 +53,49 @@
                     <img src="images/contact8.png" alt="logo_discord">
                 </div>
             </div>
-            <form>
-                <label for="Name">First Name</label>
-                <input type="text" id="first_name" required/>
-                <label for="Name">Last Name</label>
-                <input type="text" id="last_name" required/> 
-                <label for="Email">Email</label>
-                <input type="email" id="email" required/>
-                <label for="Phone"> Phone Number</label>
-                <input type="tel" id="phone"/>
-                <span>Select Subject?</span>
-                <div class="list_check">
-                    <input type="radio" checked="checkbox" name="radio"/>
-                    <label for="choix1" >General Inquiry</label>
-                    <input type="radio" checked="checkbox" name="radio"/>
-                    <label for="choix2">General Inquiry</label>
-                    <input type="radio" checked="checkbox" name="radio"/>
-                    <label for="choix3">General Inquiry</label>
-                    <input type="radio" checked="checkbox" name="radio"/>
-                    <label for="choix4">General Inquiry</label>
+            <form id="form_box">
+                <div class="info_name">
+                    <div class="box_in">
+                        <label for="Name">First Name</label>
+                        <input type="text" id="first_name" />
+                        <small id="firstNameError" class="Error"></small>
+                    </div>
+                    <div class="box_in">
+                        <label for="Name">Last Name</label>
+                        <input type="text" id="last_name" />
+                        <small id="lastNameError" class="Error"></small>
+                    </div>
+                    <div class="box_in">
+                        <label for="Email">Email</label>
+                        <input type="email" id="email" />
+                        <small id="emailError" class="Error"></small>
+                    </div>
+                    <div class="box_in">
+                        <label for="Phone"> Phone Number</label>
+                        <input type="tel" id="phone"/>
+                        <small id="phoneError" class="Error"></small>
+                    </div>
                 </div>
-                <label for="Message">Message</label>
-                <input type="text" id="message" maxlength="1000" minlength="6" required/>
+                <div class="box_in">
+                    <span><b>Select Subject?</b></span>
+                    <div class="list_check" id="checkList">
+                        <input type="radio" checked="checkbox" name="list_check" />
+                        <label for="choix1" >General Inquiry</label>
+                        <input type="radio" checked="checkbox" name="list_check" />
+                        <label for="choix2">General Inquiry</label>
+                        <input type="radio" checked="checkbox" name="list_check" />
+                        <label for="choix3">General Inquiry</label>
+                        <input type="radio" checked="checkbox" name="list_check" />
+                        <label for="choix4">General Inquiry</label>
+                    </div>
+                </div>
+                <div class="box_in">
+                    <label for="Message">Message</label>
+                    <input type="text" id="message" maxlength="2000" minlength="6" />
+                    <small id="messageError" class="Error"></small>
+                </div>
                 <a href="contact_succ.html"><button>Send Message</button></a>
+                <span id="successMessage" class="Succes"></span>
             </form>
         </div>
     </section>
@@ -145,5 +165,112 @@
                 </div>
             </div>
     </footer>
+    <script>
+        const form = document.querySelector("#form_box");
+        const firstNameInput = document.querySelector("#first_name");
+        const lastNameInput = document.querySelector("#last_name");
+        const emailInput = document.querySelector("#email");
+        const phoneInput = document.querySelector("#phone");
+        const messageInput = document.querySelector("#message");
+
+    // ======= Ciblage des éléments pour afficher les erreurs =======
+    const firstNameError = document.querySelector("#firstNameError");
+    const lastNameError = document.querySelector("#lastNameError");
+    const emailError = document.querySelector("#emailError");
+    const phoneError = document.querySelector("#phoneError");
+    const messageError = document.querySelector("#messageError");
+    const successMessage = document.querySelector("#successMessage");
+
+    // ======= Regex pour validation =======
+    const nameRegex = /^[a-zA-Z]+(\s[a-zA-Z]+)*$/; 
+    const emailRegex = /^\w+@\w+\.\w+$/; 
+    const phoneRegex = /^0[6-7]\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2}\s?$/; 
+    const messageRegex = /^.{10,}$/; 
+
+    // ======= Fonction de validation =======
+    function validateInput(input, regex, errorElement, errorMessage) {
+    if (!regex.test(input.value)) {
+        // Si le champ n'est pas valide
+        input.classList.add("invalid"); // ajoute bordure rouge
+        errorElement.textContent = errorMessage; // message d'erreur
+        return false;
+    } else {
+        // Si le champ est valide
+        input.classList.remove("invalid");
+        errorElement.textContent = ""; // efface l'erreur
+        return true;
+    }
+    }
+
+// ======= Validation en temps réel (oninput) =======
+firstNameInput.addEventListener("input", () =>
+  validateInput(firstNameInput, nameRegex, firstNameError, "Invalid First Name")
+);
+lastNameInput.addEventListener("input", () =>
+  validateInput(lastNameInput, nameRegex, lastNameError, "Invalid Last Name")
+);
+emailInput.addEventListener("input", () =>
+  validateInput(emailInput, emailRegex, emailError, "Invalid Email")
+);
+phoneInput.addEventListener("input", () =>
+  validateInput(phoneInput, phoneRegex, phoneError, "Invalid Number Phone ")
+);
+messageInput.addEventListener("input", () =>
+  validateInput(messageInput, messageRegex, messageError, "Short Message")
+);
+
+
+// ======= Validation au submit =======
+form.addEventListener("submit", function (event) {
+  event.preventDefault(); // empêche l'envoi automatique du formulaire
+
+  // Vérifie tous les champs
+  const isFirstNameValid = validateInput(
+    firstNameInput,
+    nameRegex,
+    firstNameError,
+    "Invalid First Name"
+  );
+  const isLastNameValid = validateInput(
+    lastNameInput,
+    nameRegex,
+    lastNameError,
+    "Invalid Last Name"
+  );
+  const isEmailValid = validateInput(
+    emailInput,
+    emailRegex,
+    emailError,
+    "Invalid Email"
+  );
+  const isPhoneValid = validateInput(
+    phoneInput,
+    phoneRegex,
+    phoneError,
+    "Téléphone invalide"
+  );
+  const isMessageValid = validateInput(
+    messageInput,
+    messageRegex,
+    messageError,
+    "Short Message"
+  );
+
+
+  // Si tout est valide
+  if (
+    isFirstNameValid &&
+    isLastNameValid &&
+    isEmailValid &&
+    isPhoneValid &&
+    isMessageValid 
+  ) {
+    successMessage.textContent = "Form sended successfly";
+    form.reset(); // réinitialise le formulaire
+  } else {
+    successMessage.textContent = ""; // sinon, aucun message de succès
+  }
+});
+    </script>
 </body>
 </html>

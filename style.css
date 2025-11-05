@@ -736,6 +736,10 @@ ul li{
   color: gold;
   font-variation-settings: 'FILL' 1;
 }
+.active_all {
+  color: gold;
+  font-variation-settings: 'FILL' 1;
+}
 
 
 /*mission  Modal */
@@ -825,9 +829,26 @@ ul li{
     padding: 0;
 
 }
-.list_check{
-    display: flex;
+
+.list_check {
+  display: flex;
+  gap: 13px;
+  margin-top: 10px;
 }
+.Error{
+    color: red;
+}
+.Succes{
+    color: rgb(46, 121, 46);
+    font-size: larger;
+}
+
+.list_check input[type="radio"] {
+  accent-color: #0b2335; 
+  height: 15px;
+  width: fit-content;
+}
+
 .form_user{
     display: flex;
     justify-content: space-between;
@@ -835,6 +856,7 @@ ul li{
     border-radius: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
+
 .inform{
     position: relative;
     background: url(images/contact3.png);
@@ -890,7 +912,11 @@ ul li{
 .form_user form{
     width: 60%;
     padding: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
 }
+
 .form_user input{
     width: 100%;
     padding: 5px 0px;
@@ -920,6 +946,19 @@ ul li{
     font-weight: bolder;
 }
 
+.info_name{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 50px;
+}
+.info_name input{
+    width: 250px;
+}
+.box_in{
+    display: flex;
+    flex-direction: column;
+}
 
 /* footer */
 .media_contact{

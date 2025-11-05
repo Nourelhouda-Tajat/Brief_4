@@ -337,7 +337,7 @@ function saveMission(event) {
     mission.type = type;
     mission.launchDate = launchDate;
     mission.objective = objective;
-    mission.image = image;
+    mission.image = image;  
     alert("Mission modified successfully");
   } else {
     // Mode ajout
