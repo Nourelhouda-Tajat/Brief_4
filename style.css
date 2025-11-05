@@ -1049,7 +1049,7 @@ footer input{
     right: -450px; /* Caché à droite */
     width: 450px;
     height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, #000000 0%, #353536 100%);
     box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -1068,7 +1068,7 @@ footer input{
     align-items: center;
     margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(238, 237, 237, 0.1);
 }
 
 .favorites-header h2 {
@@ -1106,14 +1106,14 @@ footer input{
 
 /* Compteur de favoris */
 .favorites-count {
-    background: rgba(255, 215, 0, 0.2);
-    color: #ffd700;
+    background: rgba(82, 82, 81, 0.2);
+    color: white;
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 14px;
     margin-bottom: 20px;
     text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid white;
 }
 
 /* Liste des favoris */
@@ -1125,18 +1125,18 @@ footer input{
 
 /* Carte favorite (version compacte) */
 .favorite-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgb(0, 0, 0);
     border-radius: 12px;
     padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid white;
     transition: all 0.3s ease;
     position: relative;
 }
 
 .favorite-card:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(42, 41, 41, 0.767);
     transform: translateX(-5px);
-    border-color: rgba(255, 215, 0, 0.3);
+    border-color: gold;
 }
 
 .favorite-card-header {
@@ -1151,7 +1151,7 @@ footer input{
     height: 60px;
     object-fit: cover;
     border-radius: 8px;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid white;
 }
 
 .favorite-card-info h3 {
@@ -1199,7 +1199,7 @@ footer input{
 .remove-favorite {
     background: rgba(255, 68, 68, 0.2);
     border: 1px solid rgba(255, 68, 68, 0.3);
-    color: #ff4444;
+    color: #fffcfc;
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
@@ -1208,7 +1208,7 @@ footer input{
 }
 
 .remove-favorite:hover {
-    background: rgba(255, 68, 68, 0.3);
+    background: red;
     transform: scale(1.05);
 }
 

@@ -1,17 +1,45 @@
 // ====== Variables globales ======
 let allMissions = []; // Toutes les missions
 let favoriteMissions = []; // IDs des missions favorites
+function saveMissionsToLocalStorage() {
+  // Convertir le tableau en texte et le sauvegarder
+  localStorage.setItem("allMissions", JSON.stringify(allMissions));
+  console.log("Mission saved in localstarage");
+}
+
+// ====== CHARGER LES MISSIONS DEPUIS LOCALSTORAGE ======
+function loadMissionsFromLocalStorage() {
+  const savedMissions = localStorage.getItem("allMissions");
+  if (savedMissions) {
+    allMissions = JSON.parse(savedMissions); 
+    console.log("Mission load by localstorage");
+    return true; 
+  }
+  return false; 
+}
 
 // ====== Chargement initial ======
-fetch("missions.json")
-  .then((response) => response.json())
-  .then((data) => {
-    allMissions = data;
-    loadFavorites(); // Charger les favoris sauvegardés
-    displayMissions(allMissions);
-    setupEventListeners();
-  })
-  .catch((err) => console.error("Erreur :", err));
+
+const hasLocalData = loadMissionsFromLocalStorage();
+
+if (hasLocalData) {
+  loadFavorites();
+  displayMissions(allMissions);
+  setupEventListeners();
+  console.log("📦 Données chargées depuis localStorage");
+} else {
+  console.log("📄 Chargement depuis missions.json...");
+  fetch("missions.json")
+    .then((response) => response.json())
+    .then((data) => {
+      allMissions = data;
+      saveMissionsToLocalStorage(); 
+      loadFavorites();
+      displayMissions(allMissions);
+      setupEventListeners();
+    })
+    .catch((err) => console.error("Erreur :", err));
+}
 
 // ====== GESTION DES FAVORIS ======
 
@@ -92,10 +120,10 @@ function updateFavoritesSidebar() {
   const count = favorites.length;
   favoritesCount.textContent =
     count === 0
-      ? "No favorite mission"
+      ? "No Favorite mission"
       : count === 1
-      ? "1 favorite mission"
-      : `${count} favorite missions`;
+      ? "1 Favorite mission"
+      : `${count} Favorite missions`;
 
   // Vider la liste
   favoritesList.innerHTML = "";
@@ -337,7 +365,11 @@ function saveMission(event) {
     mission.type = type;
     mission.launchDate = launchDate;
     mission.objective = objective;
-    mission.image = image;  
+    mission.image = image;
+    
+    // NOUVEAU : Sauvegarder dans localStorage
+    saveMissionsToLocalStorage();
+    
     alert("Mission modified successfully");
   } else {
     // Mode ajout
@@ -351,6 +383,10 @@ function saveMission(event) {
       image,
     };
     allMissions.unshift(newMission);
+    
+    // NOUVEAU : Sauvegarder dans localStorage
+    saveMissionsToLocalStorage();
+    
     alert("Mission added successfully");
   }
 
@@ -372,9 +408,12 @@ function deleteMission(missionId) {
     return;
   }
 
-  // Supprimer la mission
+// Supprimer la mission
   const index = allMissions.findIndex((m) => m.id == missionId);
   allMissions.splice(index, 1);
+  
+  // NOUVEAU : Sauvegarder dans localStorage
+  saveMissionsToLocalStorage();
 
   // Retirer des favoris si présent
   const favIndex = favoriteMissions.indexOf(Number(missionId));
