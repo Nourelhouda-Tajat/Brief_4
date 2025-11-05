@@ -19,6 +19,7 @@
                 <option value="ar">Arab</option>
             </select>
             <img src="images/Notification_H.png" alt="notif"/>
+            <i class="material-symbols-outlined favorite-icon active btn_view" id="btn_show_favorites">star</i>
         </div>
     </header>
 <!-- Navigation_Menu -->
@@ -117,7 +118,27 @@
                 </form>
                 </div>
                 </section>
+    <!-- Overlay sombre -->
+<div class="favorites-overlay" id="favorites-overlay"></div>
 
+<!-- Menu latéral favoris -->
+<div class="favorites-sidebar" id="favorites-sidebar">
+    <div class="favorites-header">
+        <h2>
+            <span class="material-symbols-outlined">star</span>
+            My Favorites
+        </h2>
+        <button class="close-favorites" id="close-favorites">×</button>
+    </div>
+    
+    <div class="favorites-count" id="favorites-count">
+        0 favorite mission
+    </div>
+    
+    <div class="favorites-list" id="favorites-list">
+        <!-- Les favoris seront injectés ici -->
+    </div>
+</div>
     <footer>
             <div class="box2">
                 <div class="part1">

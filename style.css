@@ -17,7 +17,7 @@ header {
     width: 100%;
     font-family: Arial, Helvetica, sans-serif;
     background: url(images/back.png);
-    color: white;  
+    color: white; 
     position: relative;
     
 }
@@ -33,7 +33,7 @@ header {
     width: fit-content;
     gap: 13%;
     top: 0px;
-    right: 15%;
+    right: 5%;
     position: absolute; 
 }
 select{
@@ -982,5 +982,268 @@ footer input{
     width: 220px;
 }
 
+/* ====== MENU LATÉRAL FAVORIS ====== */
 
+/* Overlay sombre derrière le menu */
+.favorites-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.favorites-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Menu latéral */
+.favorites-sidebar {
+    position: fixed;
+    top: 0;
+    right: -450px; /* Caché à droite */
+    width: 450px;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.favorites-sidebar.active {
+    right: 0; /* Visible */
+}
+
+/* Header du menu */
+.favorites-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.favorites-header h2 {
+    color: #fff;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.favorites-header .material-symbols-outlined {
+    color: #ffd700;
+    font-size: 28px;
+}
+
+.close-favorites {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-favorites:hover {
+    transform: rotate(90deg);
+    color: #ff4444;
+}
+
+/* Compteur de favoris */
+.favorites-count {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Liste des favoris */
+.favorites-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Carte favorite (version compacte) */
+.favorite-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.favorite-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(-5px);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.favorite-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.favorite-card-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.favorite-card-info h3 {
+    color: #fff;
+    font-size: 16px;
+    margin: 0 0 5px 0;
+}
+
+.favorite-card-info p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    margin: 0;
+}
+
+.favorite-card-body {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.favorite-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.favorite-card-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+}
+
+.favorite-card-date img {
+    width: 16px;
+    height: 16px;
+}
+
+.remove-favorite {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    color: #ff4444;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.remove-favorite:hover {
+    background: rgba(255, 68, 68, 0.3);
+    transform: scale(1.05);
+}
+
+/* Message vide */
+.favorites-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.favorites-empty .material-symbols-outlined {
+    font-size: 80px;
+    color: rgba(255, 215, 0, 0.3);
+    margin-bottom: 20px;
+}
+
+.favorites-empty h3 {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 10px;
+}
+
+.favorites-empty p {
+    font-size: 14px;
+}
+
+/* Scrollbar personnalisée */
+.favorites-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.favorites-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.favorites-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 4px;
+}
+
+.favorites-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.5);
+}
+
+/* Animation de l'étoile du header */
+.btn_view {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn_view:hover {
+    transform: scale(1.2);
+    color: #ffd700;
+}
+
+.btn_view.active {
+    color: #ffd700;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .favorites-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+}
 

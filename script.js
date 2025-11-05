@@ -1,24 +1,168 @@
 // ====== Variables globales ======
-let allMissions = []; // Stocke toutes les missions
-let editingMissionId = null; // Pour savoir si on édite ou on ajoute
+let allMissions = []; // Toutes les missions
+let favoriteMissions = []; // IDs des missions favorites
 
-// ====== Chargement des missions ======
+// ====== Chargement initial ======
 fetch("missions.json")
   .then((response) => response.json())
   .then((data) => {
     allMissions = data;
+    loadFavorites(); // Charger les favoris sauvegardés
     displayMissions(allMissions);
     setupEventListeners();
   })
   .catch((err) => console.error("Erreur :", err));
 
-// ====== Affichage des missions ======
+// ====== GESTION DES FAVORIS ======
+
+// Charger les favoris depuis localStorage
+function loadFavorites() {
+  const saved = localStorage.getItem("favoriteMissions");
+  if (saved) {
+    favoriteMissions = JSON.parse(saved);
+  }
+}
+
+// Sauvegarder les favoris dans localStorage
+function saveFavorites() {
+  localStorage.setItem("favoriteMissions", JSON.stringify(favoriteMissions));
+}
+
+// Vérifier si une mission est favorite
+function isFavorite(missionId) {
+  return favoriteMissions.includes(Number(missionId));
+}
+
+// Ajouter ou retirer une mission des favoris
+function toggleFavorite(missionId) {
+  const id = Number(missionId);
+  const index = favoriteMissions.indexOf(id);
+
+  if (index === -1) {
+    // Ajouter aux favoris
+    favoriteMissions.push(id);
+    console.log("✅ Mission ajoutée aux favoris:", id);
+  } else {
+    // Retirer des favoris
+    favoriteMissions.splice(index, 1);
+    console.log("❌ Mission retirée des favoris:", id);
+  }
+
+  saveFavorites();
+
+  // Rafraîchir l'affichage principal
+  applySearchAndFilters();
+
+  // Rafraîchir le menu latéral s'il est ouvert
+  if (
+    document.getElementById("favorites-sidebar").classList.contains("active")
+  ) {
+    updateFavoritesSidebar();
+  }
+}
+
+// ====== MENU LATÉRAL FAVORIS ======
+
+// Ouvrir le menu latéral
+function openFavoritesSidebar() {
+  document.getElementById("favorites-overlay").classList.add("active");
+  document.getElementById("favorites-sidebar").classList.add("active");
+  document.getElementById("btn_show_favorites").classList.add("active");
+  updateFavoritesSidebar();
+  document.body.style.overflow = "hidden"; // Bloquer le scroll
+}
+
+// Fermer le menu latéral
+function closeFavoritesSidebar() {
+  document.getElementById("favorites-overlay").classList.remove("active");
+  document.getElementById("favorites-sidebar").classList.remove("active");
+  document.getElementById("btn_show_favorites").classList.remove("active");
+  document.body.style.overflow = "auto"; // Réactiver le scroll
+}
+
+// Mettre à jour le contenu du menu latéral
+function updateFavoritesSidebar() {
+  const favoritesList = document.getElementById("favorites-list");
+  const favoritesCount = document.getElementById("favorites-count");
+
+  // Récupérer les missions favorites
+  const favorites = allMissions.filter((mission) => isFavorite(mission.id));
+
+  // Mettre à jour le compteur
+  const count = favorites.length;
+  favoritesCount.textContent =
+    count === 0
+      ? "No favorite mission"
+      : count === 1
+      ? "1 favorite mission"
+      : `${count} favorite missions`;
+
+  // Vider la liste
+  favoritesList.innerHTML = "";
+
+  // Si aucun favori
+  if (favorites.length === 0) {
+    favoritesList.innerHTML = `
+      <div class="favorites-empty">
+        <span class="material-symbols-outlined">star_border</span>
+        <h3>No favorites yet</h3>
+        <p>Click on the star icon on any mission to add it to your favorites</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Afficher les favoris
+  favorites.forEach((mission) => {
+    const card = createFavoriteCard(mission);
+    favoritesList.appendChild(card);
+  });
+}
+
+// Créer une carte favorite pour le menu latéral
+function createFavoriteCard(mission) {
+  const card = document.createElement("div");
+  card.classList.add("favorite-card");
+
+  card.innerHTML = `
+    <div class="favorite-card-header">
+      <img src="${mission.image}" alt="${mission.name}" class="favorite-card-img">
+      <div class="favorite-card-info">
+        <h3>${mission.name}</h3>
+        <p>${mission.agency}</p>
+      </div>
+    </div>
+    <div class="favorite-card-body">
+      ${mission.objective}
+    </div>
+    <div class="favorite-card-footer">
+      <div class="favorite-card-date">
+        <img src="images/calendar.png" alt="date">
+        <span>${mission.launchDate}</span>
+      </div>
+      <button class="remove-favorite" data-id="${mission.id}">Remove</button>
+    </div>
+  `;
+
+  // Bouton pour retirer des favoris
+  const removeBtn = card.querySelector(".remove-favorite");
+  removeBtn.addEventListener("click", () => {
+    toggleFavorite(mission.id);
+  });
+
+  return card;
+}
+
+// ====== AFFICHAGE DES MISSIONS ======
+
+// Afficher les missions
 function displayMissions(missions) {
   const container = document.getElementById("mission_sec");
   container.innerHTML = "";
 
   if (missions.length === 0) {
-    container.innerHTML = '<p style="color:red;">Aucune mission trouvée.</p>';
+    container.innerHTML =
+      '<p style="color:red; text-align:center; font-size:18px;">No mission found.</p>';
     return;
   }
 
@@ -28,70 +172,56 @@ function displayMissions(missions) {
   });
 }
 
-// ====== Créer une carte mission ======
+// Créer une carte mission
 function createMissionCard(mission) {
   const card = document.createElement("div");
   card.classList.add("container_mission");
 
+  // Déterminer l'icône et la classe pour les favoris
+  const isFav = isFavorite(mission.id);
+  const starIcon = isFav ? "star" : "star_border";
+  const activeClass = isFav ? "active" : "";
+
   card.innerHTML = `
-        <img src="${mission.image}" class="mission_img">
-        <div class="box_mission">
-            <h2>${mission.name} - ${mission.agency}</h2>
-            <p>${mission.objective}</p>
-            <div class="action_buttons">
-                <i class="material-symbols-outlined edit-icon" data-id="${mission.id}">edit</i>
-                <i class="material-symbols-outlined delete-icon" data-id="${mission.id}">delete</i>
-            </div>
-        </div>
-        <div class="box1_mission">
-            <img src="images/calendar.png" class="icone_mission">
-            <span>${mission.launchDate}</span>
-        </div>
-        <i class="material-symbols-outlined favorite-icon">star_border</i>
-    `;
+    <img src="${mission.image}" class="mission_img">
+    <div class="box_mission">
+      <h2>${mission.name} - ${mission.agency}</h2>
+      <p>${mission.objective}</p>
+      <div class="action_buttons">
+        <i class="material-symbols-outlined edit-icon" data-id="${mission.id}">edit</i>
+        <i class="material-symbols-outlined delete-icon" data-id="${mission.id}">delete</i>
+      </div>
+    </div>
+    <div class="box1_mission">
+      <img src="images/calendar.png" class="icone_mission">
+      <span>${mission.launchDate}</span>
+    </div>
+    <i class="material-symbols-outlined favorite-icon ${activeClass}" data-id="${mission.id}">${starIcon}</i>
+  `;
 
-  // Ajouter le favori
-  const icon = card.querySelector(".favorite-icon");
-  Favorite(icon);
-
-  // Icone edit
-  const editIcon = card.querySelector(".edit-icon");
-  editIcon.addEventListener("click", () => {
-    const missionId = editIcon.getAttribute("data-id");
-    openEditModal(missionId);
-  });
-
-  // Icone suppression
-  const deleteIcon = card.querySelector(".delete-icon");
-  deleteIcon.addEventListener("click", () => {
-    const missionId = deleteIcon.getAttribute("data-id");
-    deleteMission(missionId);
-  });
+  // Événements
+  card
+    .querySelector(".favorite-icon")
+    .addEventListener("click", () => toggleFavorite(mission.id));
+  card
+    .querySelector(".edit-icon")
+    .addEventListener("click", () => openEditModal(mission.id));
+  card
+    .querySelector(".delete-icon")
+    .addEventListener("click", () => deleteMission(mission.id));
 
   return card;
 }
 
-// ====== Fonction favori ======
-function Favorite(iconElement) {
-  iconElement.addEventListener("click", () => {
-    iconElement.classList.toggle("active");
+// ====== RECHERCHE ET FILTRAGE ======
 
-    if (iconElement.classList.contains("active")) {
-      iconElement.textContent = "star";
-    } else {
-      iconElement.textContent = "star_border";
-    }
-  });
-}
-
-// ====== Fonction de RECHERCHE ======
+// Recherche
 function searchMissions(missions) {
-  const searchInput = document.querySelector(".barre_mission input");
-  const searchText = searchInput.value.toLowerCase();
+  const searchText = document
+    .querySelector(".barre_mission input")
+    .value.toLowerCase();
 
-  if (searchText === "") {
-    return missions;
-  }
+  if (searchText === "") return missions;
 
   return missions.filter((mission) => {
     return (
@@ -103,77 +233,72 @@ function searchMissions(missions) {
   });
 }
 
-// ====== Fonction de FILTRAGE ======
+// Filtrage
 function filterMissions(missions) {
-  const agencySelect = document.getElementById("agency");
-  const typeSelect = document.getElementById("type_mission");
-  const yearSelect = document.getElementById("year");
+  const agencyValue = document.getElementById("agency").value;
+  const typeValue = document.getElementById("type_mission").value;
+  const yearValue = document.getElementById("year").value;
 
-  const agencyValue = agencySelect.value;
-  const typeValue = typeSelect.value;
-  const yearValue = yearSelect.value;
-
+  // Filtre agence
   if (agencyValue !== "" && agencyValue !== "all_agency") {
-    const selectedAgencyText =
-      agencySelect.options[agencySelect.selectedIndex].text;
-    missions = missions.filter((mission) =>
-      mission.agency.includes(selectedAgencyText)
-    );
+    const agencyText =
+      document.getElementById("agency").options[
+        document.getElementById("agency").selectedIndex
+      ].text;
+    missions = missions.filter((m) => m.agency.includes(agencyText));
   }
 
+  // Filtre type
   if (typeValue !== "" && typeValue !== "type") {
-    const selectedTypeText = typeSelect.options[typeSelect.selectedIndex].text;
-    missions = missions.filter((mission) => mission.type === selectedTypeText);
+    const typeText =
+      document.getElementById("type_mission").options[
+        document.getElementById("type_mission").selectedIndex
+      ].text;
+    missions = missions.filter((m) => m.type === typeText);
   }
 
+  // Filtre année
   if (yearValue !== "" && yearValue !== "Year") {
-    const selectedYearText = yearSelect.options[yearSelect.selectedIndex].text;
-    missions = missions.filter((mission) =>
-      mission.launchDate.includes(selectedYearText)
-    );
+    const yearText =
+      document.getElementById("year").options[
+        document.getElementById("year").selectedIndex
+      ].text;
+    missions = missions.filter((m) => m.launchDate.includes(yearText));
   }
 
   return missions;
 }
 
-// ====== Appliquer recherche ET filtrage ======
+// Appliquer recherche + filtres
 function applySearchAndFilters() {
   let result = searchMissions(allMissions);
   result = filterMissions(result);
   displayMissions(result);
 }
 
-// ====== FONCTION POUR OUVRIR LE MODAL (AJOUT) ======
+// ====== MODAL AJOUT/ÉDITION ======
+
+let editingMissionId = null;
+
+// Ouvrir modal en mode ajout
 function openModal() {
-  editingMissionId = null; // Mode ajout
-  const modal = document.getElementById("modal_add");
-  const modalTitle = modal.querySelector("h2");
-  const submitBtn = modal.querySelector(".btn_submit");
-
-  // Changer le titre et le bouton
-  modalTitle.textContent = "Add New Mission";
-  submitBtn.textContent = "Add Mission";
-
-  // Vider le formulaire
+  editingMissionId = null;
+  document.querySelector("#modal_add h2").textContent = "Add New Mission";
+  document.querySelector(".btn_submit").textContent = "Add Mission";
   document.getElementById("form_add_mission").reset();
-
-  // Afficher le modal
-  modal.style.display = "block";
+  document.getElementById("modal_add").style.display = "block";
 }
 
-// ====== NOUVELLE FONCTION : OUVRIR LE MODAL (ÉDITION) ======
+// Ouvrir modal en mode édition
 function openEditModal(missionId) {
-  editingMissionId = missionId; // Mode édition
-
-  // Trouver la mission à éditer
+  editingMissionId = missionId;
   const mission = allMissions.find((m) => m.id == missionId);
 
   if (!mission) {
-    alert("Mission non trouvée !");
+    alert("Mission not found");
     return;
   }
 
-  // Remplir le formulaire avec les données existantes
   document.getElementById("mission_name").value = mission.name;
   document.getElementById("mission_agency").value = mission.agency;
   document.getElementById("mission_type").value = mission.type;
@@ -181,31 +306,22 @@ function openEditModal(missionId) {
   document.getElementById("mission_objective").value = mission.objective;
   document.getElementById("mission_image").value = mission.image;
 
-  // Changer le titre et le bouton
-  const modal = document.getElementById("modal_add");
-  const modalTitle = modal.querySelector("h2");
-  const submitBtn = modal.querySelector(".btn_submit");
-
-  modalTitle.textContent = "Edit Mission";
-  submitBtn.textContent = "Update Mission";
-
-  // Afficher le modal
-  modal.style.display = "block";
+  document.querySelector("#modal_add h2").textContent = "Edit Mission";
+  document.querySelector(".btn_submit").textContent = "Update Mission";
+  document.getElementById("modal_add").style.display = "block";
 }
 
-// ====== FONCTION POUR FERMER LE MODAL ======
+// Fermer modal
 function closeModal() {
-  const modal = document.getElementById("modal_add");
-  modal.style.display = "none";
+  document.getElementById("modal_add").style.display = "none";
   document.getElementById("form_add_mission").reset();
-  editingMissionId = null; // Réinitialiser
+  editingMissionId = null;
 }
 
-// ====== FONCTION POUR AJOUTER OU MODIFIER UNE MISSION ======
+// Sauvegarder mission (ajout ou édition)
 function saveMission(event) {
   event.preventDefault();
 
-  // Récupérer les valeurs du formulaire
   const name = document.getElementById("mission_name").value;
   const agency = document.getElementById("mission_agency").value;
   const type = document.getElementById("mission_type").value;
@@ -213,108 +329,114 @@ function saveMission(event) {
   const objective = document.getElementById("mission_objective").value;
   const image = document.getElementById("mission_image").value;
 
-  // Vérifier si on est en mode ÉDITION ou AJOUT
   if (editingMissionId !== null) {
-    // MODE ÉDITION : Modifier la mission existante
-    const missionIndex = allMissions.findIndex((m) => m.id == editingMissionId);
-
-    if (missionIndex !== -1) {
-      allMissions[missionIndex].name = name;
-      allMissions[missionIndex].agency = agency;
-      allMissions[missionIndex].type = type;
-      allMissions[missionIndex].launchDate = launchDate;
-      allMissions[missionIndex].objective = objective;
-      allMissions[missionIndex].image = image;
-
-      alert("✅ Mission modifiée avec succès !");
-    }
+    // Mode édition
+    const mission = allMissions.find((m) => m.id == editingMissionId);
+    mission.name = name;
+    mission.agency = agency;
+    mission.type = type;
+    mission.launchDate = launchDate;
+    mission.objective = objective;
+    mission.image = image;
+    alert("Mission modified successfully");
   } else {
-    // MODE AJOUT : Créer une nouvelle mission
+    // Mode ajout
     const newMission = {
-      id: Date.now(), // Générer un ID unique
-      name: name,
-      agency: agency,
-      type: type,
-      launchDate: launchDate,
-      objective: objective,
-      image: image,
+      id: Date.now(),
+      name,
+      agency,
+      type,
+      launchDate,
+      objective,
+      image,
     };
-
     allMissions.unshift(newMission);
-    alert("✅ Mission ajoutée avec succès !");
+    alert("Mission added successfully");
   }
 
-  // Rafraîchir l'affichage
-  displayMissions(allMissions);
-
-  // Fermer le modal
+  applySearchAndFilters();
   closeModal();
 }
 
-// ====== FONCTION SUPPRESSION (À COMPLÉTER PLUS TARD) ======
+// ====== SUPPRESSION ======
+
 function deleteMission(missionId) {
-   const mission = allMissions.find((m) => m.id == missionId);
+  const mission = allMissions.find((m) => m.id == missionId);
 
-   if (!mission) {
-     alert("❌ Mission non trouvée !");
-     return;
-   }
+  if (!mission) {
+    alert("Mission not found!");
+    return;
+  }
 
-   // 2. Demander confirmation avec le nom de la mission
-   const confirmation = confirm(
-     `⚠️ Êtes-vous sûr de vouloir supprimer la mission "${mission.name}" ?\n\nCette action est irréversible.`
-   );
+  if (!confirm(`Delete "${mission.name}"?\n\nThis action is irreversible.`)) {
+    return;
+  }
 
-   // 3. Si l'utilisateur clique sur "Annuler", on arrête
-   if (!confirmation) {
-     return;
-   }
+  // Supprimer la mission
+  const index = allMissions.findIndex((m) => m.id == missionId);
+  allMissions.splice(index, 1);
 
-   // 4. Supprimer la mission du tableau
-   const missionIndex = allMissions.findIndex((m) => m.id == missionId);
-   allMissions.splice(missionIndex, 1);
+  // Retirer des favoris si présent
+  const favIndex = favoriteMissions.indexOf(Number(missionId));
+  if (favIndex !== -1) {
+    favoriteMissions.splice(favIndex, 1);
+    saveFavorites();
+  }
 
-   // 5. Rafraîchir l'affichage
-   displayMissions(allMissions);
+  applySearchAndFilters();
 
-   // 6. Message de confirmation
-   alert("✅ Mission supprimée avec succès !");
+  // Mettre à jour le menu latéral
+  if (
+    document.getElementById("favorites-sidebar").classList.contains("active")
+  ) {
+    updateFavoritesSidebar();
+  }
+
+  alert("Mission deleted successfully");
 }
 
-// ====== ÉCOUTER LES ÉVÉNEMENTS DU MODAL ======
-function setupModalListeners() {
-  // Bouton "Ajouter"
-  const btnAdd = document.getElementById("btn_add_mission");
-  btnAdd.addEventListener("click", openModal);
+// ====== ÉVÉNEMENTS ======
 
-  // Bouton "X" pour fermer
-  const closeBtn = document.querySelector(".close");
-  closeBtn.addEventListener("click", closeModal);
+function setupEventListeners() {
+  // Recherche et filtres
+  document
+    .querySelector(".barre_mission input")
+    .addEventListener("input", applySearchAndFilters);
+  document
+    .getElementById("agency")
+    .addEventListener("change", applySearchAndFilters);
+  document
+    .getElementById("type_mission")
+    .addEventListener("change", applySearchAndFilters);
+  document
+    .getElementById("year")
+    .addEventListener("change", applySearchAndFilters);
 
-  // Cliquer en dehors du modal pour fermer
-  const modal = document.getElementById("modal_add");
-  window.addEventListener("click", function (event) {
-    if (event.target === modal) {
+  // Modal
+  document
+    .getElementById("btn_add_mission")
+    .addEventListener("click", openModal);
+  document.querySelector(".close").addEventListener("click", closeModal);
+  document
+    .getElementById("form_add_mission")
+    .addEventListener("submit", saveMission);
+
+  window.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("modal_add")) {
       closeModal();
     }
   });
 
-  // Soumettre le formulaire
-  const form = document.getElementById("form_add_mission");
-  form.addEventListener("submit", saveMission);
-}
+  // Bouton favoris dans le header (ouvrir le menu latéral)
+  document
+    .getElementById("btn_show_favorites")
+    .addEventListener("click", openFavoritesSidebar);
 
-// ====== Écouter les changements ======
-function setupEventListeners() {
-  const searchInput = document.querySelector(".barre_mission input");
-  const agencySelect = document.getElementById("agency");
-  const typeSelect = document.getElementById("type_mission");
-  const yearSelect = document.getElementById("year");
-
-  searchInput.addEventListener("input", applySearchAndFilters);
-  agencySelect.addEventListener("change", applySearchAndFilters);
-  typeSelect.addEventListener("change", applySearchAndFilters);
-  yearSelect.addEventListener("change", applySearchAndFilters);
-
-  setupModalListeners();
+  // Fermer le menu latéral
+  document
+    .getElementById("close-favorites")
+    .addEventListener("click", closeFavoritesSidebar);
+  document
+    .getElementById("favorites-overlay")
+    .addEventListener("click", closeFavoritesSidebar);
 }
